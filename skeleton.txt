@@ -1,0 +1,7 @@
+indexedReference = structure de donnée avec bwt sa .... du genome de reference
+
+def main(indexedReference, k(taille des seed), dmax(maximum d'erreur)) -> renvoi le tableau de resultat
+
+def exactPatternMatchingForOneSeed(p(la pattern a rechercher), indexedReference) -> renvoi de la liste des position de la pattern p dans le gen de ref
+
+def patternForSeeds(indexedReference, )
