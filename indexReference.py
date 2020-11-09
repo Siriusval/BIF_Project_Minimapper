@@ -8,15 +8,15 @@ class IndexReference:
     
     def __init__(self, text):
         self.text = text
-        self.sa = self.getSA()
-        self.bwt = self.bwt_from_sa()
+        self.sa = self.__getSA()
+        self.bwt = self.__bwt_from_sa()
          
          
     """
     getSuffixes
     return all suffixes of a string, in a list
     """
-    def getSuffixes(self):
+    def __getSuffixes(self):
         suffixes = {}
         size = len(self.text)
         for i in range(size):
@@ -29,14 +29,14 @@ class IndexReference:
     suffixes -> list of the suffixes to order
     """
     
-    def getSortedSuffixes(self,suffixes, reverse = False):
+    def __getSortedSuffixes(self,suffixes, reverse = False):
         return sorted(suffixes.items(), key=lambda x : x[1], reverse=reverse)
    
     """
     getSuffixesTable
     return only the indexes of the previously sorted suffix dict
     """
-    def getSuffixesTable(self,sortedSuffixes):
+    def __getSuffixesTable(self,sortedSuffixes):
         table = []
         for elem in sortedSuffixes:
             table.append(elem[0])
@@ -46,10 +46,10 @@ class IndexReference:
     Full fonction
     Get all suffixes -> Sort them -> return SuffixArray
     """
-    def getSA(self, rev = False):
-        suffixes = self.getSuffixes()
-        sortedSuffixes = self.getSortedSuffixes(suffixes,rev)
-        suffixTable = self.getSuffixesTable(sortedSuffixes)
+    def __getSA(self, rev = False):
+        suffixes = self.__getSuffixes()
+        sortedSuffixes = self.__getSortedSuffixes(suffixes,rev)
+        suffixTable = self.__getSuffixesTable(sortedSuffixes)
         return suffixTable
     
     """
@@ -63,7 +63,7 @@ class IndexReference:
     return Burrows Wheeler Transform, 
                 aka list of last column of char in ordered circular suffixes
     """
-    def bwt_from_sa(self):
+    def __bwt_from_sa(self):
         sLength = len(self.sa)
         BWT = sLength*[0];
     
