@@ -4,14 +4,45 @@ Created on Mon Nov  9 09:40:01 2020
 
 @author: Valou
 """
-class IndexReference:
+import pickle
+import gzip
+
+class Reference:
     
-    def __init__(self, text):
+    def __init__(self):
+        self.text = None
+        self.sa = None
+        self.bwt = None
+
+    """
+    createIndex
+    index a string and create SA and BWT 
+    """         
+    def createIndex(self, text):
         self.text = text
         self.sa = self.__getSA()
         self.bwt = self.__bwt_from_sa()
-         
-         
+
+    """
+    save
+    Save the current Reference Object into a zip
+    """
+    def save(self,filename):
+        #pickle.dump(index, open("myobjectIndex.dumped","wb"))
+        pickle.dump(self, gzip.open(f'{filename}.dumped.gz', "wb"))
+
+    """
+    load
+    Load a zip into a Reference Object
+    """
+    def load(self,filename):
+        #Charger
+        #index = pickle.load(open("myobjectIndex.dumped","rb"))
+        ref = pickle.load(gzip.open(f'{filename}.dumped.gz', "rb"))
+        self.text = ref.text
+        self.sa = ref.sa
+        self.bwt = ref.bwt
+    
     """
     getSuffixes
     return all suffixes of a string, in a list
@@ -31,7 +62,7 @@ class IndexReference:
     
     def __getSortedSuffixes(self,suffixes, reverse = False):
         return sorted(suffixes.items(), key=lambda x : x[1], reverse=reverse)
-   
+
     """
     getSuffixesTable
     return only the indexes of the previously sorted suffix dict

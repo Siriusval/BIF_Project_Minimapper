@@ -5,11 +5,11 @@ Created on Mon Nov  9 10:43:40 2020
 @author: Valou
 """
 
-from indexReference import IndexReference
+from reference import Reference
 
 class ExactPatternIdentification:
     
-    def __init__(self, index : IndexReference):
+    def __init__(self, index : Reference):
         self.BWT = index.bwt
         self.SA = index.sa
         self.N, self.rank = self.__get_rank() #N -> liste d'occurences
@@ -132,7 +132,7 @@ class ExactPatternIdentification:
             first = self.__find_first(P[pos_p],startingIndex)
     
             if first > endingIndex : #si on dépasse la fenetre, le pattern n'est pas contenu dans s
-                return (-1,-1)
+                return -1
     
             # trouver l'index de la lettre precedente du pattern dans L
             #borne inf
