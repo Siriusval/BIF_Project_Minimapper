@@ -1,1 +1,0 @@
-python parserTest.py -ref genome.fasta -reads reads.fasta -k 15 -dmax 4 -out result-k15-dmax4.txt

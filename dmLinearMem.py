@@ -77,7 +77,7 @@ class DMLinearMem():
                 insert = self.matrix[1][j-1] + self.gap
                 match = self.matrix[0][j-1] + self.score(self.S[count],self.T[j-1])
                 
-                self.matrix[1][j] = max(delete,insert,match,0)
+                self.matrix[1][j] = max(delete,insert,match)
             
             #
             if (shouldPrint):

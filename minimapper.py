@@ -74,36 +74,61 @@ def alignSemiGlobal(read,index,posSeedInRef,posSeedInRead,k,dmax):
     endIndexReference = posSeedInRef + dmax + len(read) - posSeedInRead #pos of anchor + dmax + number of char after the seed in the read
     endIndexReference = endIndexReference if endIndexReference < len(index.text)-1 else len(index.text)-1 
     
-    substringRef = index.text[startIndexReference:endIndexReference+1]
-    dm = DMLinearMem(read,substringRef, +2, -1, -1)
+    substringRef = index.text[startIndexReference:endIndexReference]
+    dm = DMLinearMem(read,substringRef, 0, -1, -1)
     
     return dm.getBestScore()
     
-def getBestSemiGlobalAlg(read,index,k,dmax):
+def getBestSemiGlobalAlg(read : str,index : Reference,k : int,dmax : int, reverse : bool = False):
+    
+    if(reverse):
+        read = reverseCompl(read)
+        
     epi= ExactPatternIdentification(index)
-    seeds = [read[i:i+k] for i in range(0, len(read)-k)]
-    bestScore = -1
+    seeds = [read[i:i+k] for i in range(0, len(read)-k+1)]
+    bestNbError = -1
     bestPos = -1
     for i in range(0,len(seeds)):
         seed = seeds[i]
         positions = epi.search(seed) #find positions of seed in Ref
-        if(positions == -1): #seed not in reference
-            return -1,-1
-        
+        if(positions == -1): #seed not in reference, go to next seed
+            continue
         
         for position in positions: #attention a ne pas retraiter une portion deja traitéé(liste tuple ?)
-            score = alignSemiGlobal(read,index,position,i*k,k,dmax)
-            if (score > bestScore):
-                bestScore = score
+            nbError = alignSemiGlobal(read,index,position,i,k,dmax) # get nb error
+            nbError = abs(nbError) #minus to pos
+            
+            #if first value
+            if (bestNbError == -1):
+                bestNbError = nbError
+                bestPos = position 
+            #else if less errors
+            elif (nbError < bestNbError):
+                bestNbError = nbError
                 bestPos = position
     
-    return bestScore,bestPos
+    return bestNbError,bestPos
 
 def appendResults(outputStream,readName:str,bestPos : int,isRevCompl:bool,bestScore:int):
     t = "\t"
     str =f'{readName}{t}{bestPos}{t}{"-" if isRevCompl else "+"}{t}{bestScore}{t}\n'
     outputStream.write(str)
 
+def reverseCompl(sequence : str):
+    buffer = ""
+    compl = {
+        "A": "T",
+        "C": "G",
+        "G": "C",
+        "T": "A",
+    }
+    for i in range(len(sequence)-1,-1,-1):
+       buffer += compl.get(sequence[i], "Err")
+    
+    return buffer
+    
+    
+    
 """
 Find the best alignments of all reads on a reference
 output a text file with results
@@ -125,7 +150,7 @@ def main():
     
     readName,readContent = getNextRead(readStream)
     print("First read :","\n",readName,readContent,"\n")
-    
+    print("RevCompl :","\n",reverseCompl(readContent),"\n")
     #outputStream
     outputStream = open(args.out, "w")
 
@@ -133,20 +158,42 @@ def main():
         
     while(readContent!= -1):
         print(readName,"(processing)")
-        bestScore,bestPos = getBestSemiGlobalAlg(readContent,reference,args.k,args.dmax)#(score,pos)
-        isRevCompl = False
         
-        #Found a result
-        if(bestScore != -1):
-            #We return the number of errors
-            bestScore = 2*len(readContent)-bestScore
-            
-            if bestScore <= args.dmax:
-                appendResults(outputStream,readName,bestPos,isRevCompl,bestScore) #with tabs
+        #Get best align for read
+        bestNbError,bestPos = getBestSemiGlobalAlg(readContent,reference,args.k,args.dmax,False)#(score,pos)
+        isRevCompl = False
+        foundResult = bestNbError != -1
+        
+        #get best align for revComplement of read
+        bestNbErrorRev,bestPosRev = getBestSemiGlobalAlg(readContent,reference,args.k,args.dmax,True)#(score,pos)
+        foundResultRev = bestNbErrorRev != -1
+        
+        #if both found, return the one with less errors or closer to the left
+        if(foundResult and foundResultRev):
+            if((bestNbErrorRev < bestNbError) or (bestNbErrorRev == bestNbError and bestPosRev<bestPos)):
+                bestNbError = bestNbErrorRev
+                bestPos = bestPosRev
+                isRevCompl = True
+        #if only foundResultRev
+        elif(foundResultRev):
+            bestNbError = bestNbErrorRev
+            bestPos = bestPosRev
+            isRevCompl = True
+        
+        
+        
+        if((foundResult or foundResultRev) and bestNbError <= args.dmax):
+            appendResults(outputStream,readName,bestPos,isRevCompl,bestNbError) #with tabs
         
         readName,readContent = getNextRead(readStream)
 
     outputStream.close()
+    
+    #print out file
+    print()
+    f = open(args.out,"r")
+    print(f.read())
+    f.close()
 
 
     

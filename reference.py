@@ -19,7 +19,7 @@ class Reference:
     index a string and create SA and BWT 
     """         
     def createIndex(self, text):
-        self.text = text
+        self.text = text+"$"
         self.sa = self.__getSA()
         self.bwt = self.__bwt_from_sa()
 
