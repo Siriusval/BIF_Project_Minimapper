@@ -1,5 +1,5 @@
 read1	0	+	200	
-read2	-1	+	-1	
+read2	900	+	200	
 read3	500	+	200	
 read4	-1	+	-1	
 read5	-1	+	-1	
@@ -14,7 +14,7 @@ read13	-1	+	-1
 read14	-1	+	-1	
 read15	-1	+	-1	
 read16	-1	+	-1	
-read17	-1	+	-1	
+read17	500	+	192	
 read18	-1	+	-1	
 read19	-1	+	-1	
 read20	-1	+	-1	
