@@ -27,7 +27,7 @@ return str, the string that represents the sequence
 def getSequence(filename:str):
     input = open(filename,"r")
     input.readline() #skip first line
-    sequence = input.readline()
+    sequence = input.readline().strip()
     input.close()
     return sequence
 
@@ -115,14 +115,11 @@ def getBestSemiGlobalAlg(read,indexedReference,k,dmax):
     bestPos = -1
     # A list of the previous positions  
     previousPositions = []
-    
     #for all seed
     for i in range(0,len(seeds)):
 
         seed = seeds[i]
-        
         positions = indexedReference.P_in_S(seed) #find positions of seed in Ref
-
         #for each positions of a seed
         for position in positions: #attention a ne pas retraiter une portion deja traitéé(liste tuple ?)
 
@@ -209,8 +206,8 @@ def main():
         reference.save(fileName)
         print("reference indexed and saved")
 
+    print("DEBUG",reference.N)       
     print("Reference : ","\n",reference.text[:10],"...","\n")
-
     #open Reads
     print("- READS :")
 
@@ -230,7 +227,8 @@ def main():
             isRevCompl = False
             bestScore,bestPos = getBestSemiGlobalAlg(readContent,reference,args.k,args.dmax)
             bestScoreRev,bestPosRev = getBestSemiGlobalAlg(reverseCompl(readContent),reference,args.k,args.dmax)
-            
+
+
             #if the reverse search is better we take it
             if(bestScoreRev < bestScore):
                 bestScore,bestPos = bestScoreRev,bestPosRev
