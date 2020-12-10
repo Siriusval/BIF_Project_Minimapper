@@ -1,0 +1,36 @@
+Test2 : jeu de données "E. coli" 
+
+Note: Escherichia coli est une bactérie "modèle" en biologie, son génome fait environ 5 Mb, nous an avons extrait une sous-séquence de 100 Kb (100000 caractères).
+
+Données :
+ - genome_ecoli_100kb.fasta : génome de référence (1 séquence de 100 Kb = 100000 caractères).
+ - reads.fasta : 5000 reads (de taille 100 pb) issus du séquençage Illumina d'une souche légèrement différente du génome de référence.
+
+Ce jeu de données vous servira pour effectuer les tests de sensibilité et de performances (temps) de votre mapper en fonction des paramètres k et dmax. 
+
+On calculera le temps d'exécution et le % d'alignements retrouvés (recall) pour différentes valeurs de dmax (0, 2, 4 et 8) et de k (à vous de choisir les valeurs intéressantes). Ces résultats seront à présenter dans des tableaux (du manuel utilisateur), du type ci-dessous, et devront vous aider à orienter l'utilisateur quant au choix des valeurs de ces paramètres.
+
+dmax = 2
+|   k    |  recall (%)  |  time (s)  |
+|------------------------------------|
+|   ..   |     ...      |    ...     |
+|   20   |    100.0     |    152     |
+|   ..   |     ...      |    ...     |
+|   60   |     71.0     |     53     |
+|   ..   |     ...      |    ...     |
+|  100   |     13.8     |      7     |
+--------------------------------------
+
+dmax = ...
+
+
+Pour calculer le recall, nous vous donnons le nombre maximal d'alignements qu'on peut obtenir pour reads.fasta pour les valeurs de dmax demandées (nb_align_bonus est le nombre total d'alignements alignés en strand=+ et strand=-, si on a implémenté le bonus "reverse-complement") :
+
+|   dmax    |  nb_align  |  nb_align_bonus  |
+|-------------------------------------------|
+|     0     |      99 	 |    	  221       | 
+|     2     |     803	 |    	 1597  	    |
+|     4	    |    1608	 |    	 3224  	    |
+|     8	    |    2381	 | 	  	 4796       |
+---------------------------------------------
+

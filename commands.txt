@@ -1,0 +1,2 @@
+python minimapper.py -ref test1/reference6.fasta -reads test1/reads.fasta -k 20 -dmax 5 -out result6-k20-dmax5.txt
+python minimapper.py -ref test2/genome_ecoli_100kb.fasta -reads test2/reads.fasta -k 20 -dmax 2 -out resultEcoli-k20-dmax2.txt
