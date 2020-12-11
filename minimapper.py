@@ -13,7 +13,7 @@ from os import path # allow access to files
 from reference import Reference # Manage operations on genome
 from timer import Timer # Time execution of function
 from argParser import argParse # Manage argument of program
-from dmLinearMem import DMLinearMem # Manage matrix and semiGlobal alignment
+from dmLinearMem import DMLinearMemBis # Manage matrix and semiGlobal alignment
 
 
 # In[1]:
@@ -89,10 +89,10 @@ startIndexReference -> start of the sub-portion of the ref to use
 endIndexReference -> end of the sub-portion of the ref to use
 return (score,pos) the best score and the position of the semi global alignment
 '''
-def alignSemiGlobal(read,indexedReference,startIndexReference,endIndexReference):
+def alignSemiGlobal(read,indexedReference,startIndexReference,endIndexReference,dmax,posIndex,posRead):
 
     substringRef = indexedReference.text[startIndexReference:endIndexReference+1]
-    dm = DMLinearMem(read,substringRef, 0, 1, 1)
+    dm = DMLinearMemBis(read,substringRef, 0, 1, 1,dmax,posIndex,posRead)
     dm.initSemiGlobal()
     score,pos = dm.getBestScore()
     pos = pos + startIndexReference
@@ -120,14 +120,16 @@ def getBestSemiGlobalAlg(read,indexedReference,k,dmax):
 
         seed = seeds[i]
         positions = indexedReference.P_in_S(seed) #find positions of seed in Ref
+
         #for each positions of a seed
-        for position in positions: #attention a ne pas retraiter une portion deja traitéé(liste tuple ?)
+        for position in positions:
 
             # get start index
             (startIndex, endIndex) = getAlignIndex(read,indexedReference,position,i,dmax)
             #if read not !already aligned
-            if(not (startIndex in previousPositions)):
-                score,pos = alignSemiGlobal(read,indexedReference,startIndex,endIndex)
+            if(not (startIndex  in previousPositions)):
+
+                score,pos = alignSemiGlobal(read,indexedReference,startIndex,endIndex,dmax, position - startIndex,i)
                 previousPositions.append(startIndex)
             
             if score == 0 :
