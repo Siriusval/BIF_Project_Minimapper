@@ -3,7 +3,7 @@
 '''
 Class for DMLinearMem
 stores a matrix |S|x2 (|S|+1 lines and 2), sequences S and T and the score system (match, mismatch, gap)
-defines some global alignment functions
+defines some semi-global alignment functions
 '''
 class DMLinearMem:
 

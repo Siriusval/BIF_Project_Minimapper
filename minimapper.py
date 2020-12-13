@@ -215,6 +215,7 @@ def main():
     readName,readContent = getNextRead(readStream)
     print("First read :",readName,readContent)
     print("RevCompl :",reverseCompl(readContent),"\n")
+    
     #outputStream
     outputStream = open(args.out, "w")
 
@@ -246,6 +247,7 @@ def main():
 
         
 
+    readStream.close()
     outputStream.close()
     
     #print out file
