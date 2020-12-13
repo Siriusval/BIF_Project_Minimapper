@@ -42,6 +42,7 @@ class DMLinearMem:
         minimumScore = len(self.S)*self.gap
         #We fill the matrix column by column instead of line by line like previously because otherwise the result would be erased
         for j in range(1,len(self.T)+1):
+            
             for i in range(1,len(self.S)+1):
                 #for the initialisation of the positions
                 if(i==1):
@@ -63,13 +64,65 @@ class DMLinearMem:
                     self.matrix[i][j%2].start = self.matrix[i][(j+1)%2].start
                 else :
                     self.matrix[i][j%2].start = self.matrix[i-1][j%2].start
-                    
+                
+                
                 #We change the value of maximum only if we are in the last line
                 if(i == len(self.S) and self.matrix[i][j%2].value < minimumScore):
                     minimumScore = self.matrix[i][j%2].value
                     pos = self.matrix[i][j%2].start
                     
         return minimumScore,pos
+    
+    '''
+    Get the best semiGlobal alignment
+    Optimization : we only look on the diagonal around the seed 
+    for this, we need to know where the seed is located in both strings
+    dmax -> max number of error
+    posIndex -> pos of the seed in the reference's substring
+    posRead -> pos of the seed in the read
+    '''
+    def getBestScoreOptiDiag(self, dmax,posIndex,posRead):
+        '''fill the matrix'''
+        #We use this variable to store the maximum, otherwise it would be erased // initialize at only gap
+        minimumScore = len(self.S)*self.gap
+        #We fill the matrix column by column instead of line by line like previously because otherwise the result would be erased
+        for j in range(1,len(self.T)+1):
+            for i in range(1,len(self.S)+1):
+                #if we are on the diagonal
+                if (abs(i-j + posIndex - posRead)) <= (dmax + 1) :
+                    #if we are at the border
+                    if (abs(i-j + posIndex-posRead)) == (dmax + 1) :
+                        self.matrix[i][j%2].value = (dmax + 1) * self.gap
+                    #else we are on the diagonal
+                    else:
+                        #for the initialisation of the positions
+                        if(i==1):
+                            self.matrix[0][(j+1)%2].start = j-1
+                            self.matrix[0][(j)%2].start = j-2
+                        #We only have two space aviable so we use modulo for reach the values 
+                        #Score for diagonal
+                        scoreDiag = self.matrix[i-1][(j+1)%2].value + self.score(self.T[j-1],self.S[i-1])
+                        #Score for left
+                        scoreLeft = self.matrix[i][(j+1)%2].value + self.gap
+                        #Score for up
+                        scoreUp = self.matrix[i-1][j%2].value + self.gap
+                        self.matrix[i][j%2].value = min(scoreDiag,scoreLeft,scoreUp)
+                        
+                        #Update the starting position
+                        if scoreDiag == min(scoreDiag,scoreLeft,scoreUp):
+                            self.matrix[i][j%2].start = self.matrix[i-1][(j+1)%2].start
+                        elif scoreLeft == min(scoreDiag,scoreLeft,scoreUp):
+                            self.matrix[i][j%2].start = self.matrix[i][(j+1)%2].start
+                        else :
+                            self.matrix[i][j%2].start = self.matrix[i-1][j%2].start
+                           
+                        #We change the value of maximum only if we are in the last line
+                        if(i == len(self.S) and self.matrix[i][j%2].value < minimumScore):
+                            minimumScore = self.matrix[i][j%2].value
+                            pos = self.matrix[i][j%2].start  
+        return minimumScore,pos
+    
+   
 
 # In[1]:
 # HELPER CLASS
