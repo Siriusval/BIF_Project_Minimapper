@@ -73,37 +73,6 @@ class DMLinearMem:
                     
         return minimumScore,pos
     
-class DMLinearMemOptiDiag:
-
-    def __init__(self, S, T, match, mismatch, gap):
-        ''' defines and stores initial values'''
-        
-        self.S=S
-        self.T=T
-        self.gap=gap
-        self.match=match
-        self.mismatch=mismatch
-        
-        self.matrix = [MatrixValue(0,0) for i in range(len(S)+1)]
-        for i in range(len(S)+1):
-            self.matrix[i] = [MatrixValue(0,j) for j in range(2)]
-
-    def score(self,cara1,cara2):
-        '''return the score of a match if cara1 = cara2 and the score of a mismatch if they are differents'''
-        if(cara1 == cara2):
-            return self.match
-        else :
-            return self.mismatch
-    
-    def initSemiGlobal(self):
-        '''do the initialisation for the semi-global alignement'''
-        for i in range(1,len(self.S)+1):
-            self.matrix[i][0].value = i*self.gap
-            self.matrix[i][0].start = 0
-        for j in range(2):
-            self.matrix[0][j].value = 0
-            self.matrix[0][j].start = j
-    
     '''
     Get the best semiGlobal alignment
     Optimization : we only look on the diagonal around the seed 
@@ -112,7 +81,7 @@ class DMLinearMemOptiDiag:
     posIndex -> pos of the seed in the reference's substring
     posRead -> pos of the seed in the read
     '''
-    def getBestScore(self, dmax,posIndex,posRead):
+    def getBestScoreOptiDiag(self, dmax,posIndex,posRead):
         '''fill the matrix'''
         #We use this variable to store the maximum, otherwise it would be erased // initialize at only gap
         minimumScore = len(self.S)*self.gap
@@ -152,6 +121,8 @@ class DMLinearMemOptiDiag:
                             minimumScore = self.matrix[i][j%2].value
                             pos = self.matrix[i][j%2].start  
         return minimumScore,pos
+    
+   
 
 # In[1]:
 # HELPER CLASS

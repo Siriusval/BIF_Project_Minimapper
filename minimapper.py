@@ -13,7 +13,7 @@ from os import path # allow access to files
 from reference import Reference # Manage operations on genome
 from timer import Timer # Time execution of function
 from argParser import argParse # Manage argument of program
-from dmLinearMem import DMLinearMemOptiDiag # Manage matrix and semiGlobal alignment
+from dmLinearMem import DMLinearMem # Manage matrix and semiGlobal alignment
 
 
 # In[1]:
@@ -92,9 +92,10 @@ return (score,pos) the best score and the position of the semi global alignment
 def alignSemiGlobal(read,indexedReference,startIndexReference,endIndexReference,dmax,posIndex,posRead):
 
     substringRef = indexedReference.text[startIndexReference:endIndexReference+1]
-    dm = DMLinearMemOptiDiag(read,substringRef, 0, 1, 1)
+    dm = DMLinearMem(read,substringRef, 0, 1, 1)
     dm.initSemiGlobal()
-    score,pos = dm.getBestScore(dmax,posIndex,posRead)
+    #score,pos = dm.getBestScore() #without opti
+    score,pos = dm.getBestScoreOptiDiag(dmax,posIndex,posRead) #with opti
     pos = pos + startIndexReference
     
     return score,pos
